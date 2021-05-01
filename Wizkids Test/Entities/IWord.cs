@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wizkids_Test.Entities
 {
-    interface IWord
+    public interface IWord
     {
         string Value { get; set; }
     }

@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Wizkids_Test"
+        xmlns:local="clr-namespace:Wizkids_Test" xmlns:viewmodels="clr-namespace:Wizkids_Test.ViewModels"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         mc:Ignorable="d"
         Title="Word prediction" Height="450" Width="800">
     <Grid Margin="5">
@@ -16,7 +17,12 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Label Grid.Row="0" Grid.Column="0">Your text</Label>
-        <TextBox Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center"></TextBox>
+        <TextBox Grid.Row="0" 
+                 Grid.Column="1" 
+                 VerticalContentAlignment="Center" 
+                 Text="{Binding TargetString, UpdateSourceTrigger=PropertyChanged}" 
+                 x:Name="InputTextBox"
+                 ></TextBox>
         <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -29,7 +35,7 @@
             <Label Grid.Row="0" Grid.Column="0">Web service result</Label>
             <Label Grid.Row="0" Grid.Column="1">Custom dictionary result</Label>
             <ListBox Grid.Row="1" Grid.Column="0"></ListBox>
-            <ListBox Grid.Row="1" Grid.Column="1"></ListBox>
+            <ListBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding DbWords}" DisplayMemberPath="Value"></ListBox>
         </Grid>
     </Grid>
 </Window>

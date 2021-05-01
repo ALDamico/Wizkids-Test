@@ -14,19 +14,37 @@ namespace Wizkids_Test.Repositories
         {
         }
 
+        private static readonly string getMatchesQuery = @"
+            SELECT Id, Value
+            FROM Words
+            WHERE LOWER(Value) LIKE ?
+";
+
         public IEnumerable<Word> GetMatches(string partial)
         {
-            var partialFixed = partial.ToLowerInvariant();
-            var query = @"
-                SELECT Id, Value
-                FROM Words
-                WHERE LOWER(Value) LIKE ?
-";
+            var partialFixed = GetFixedPartialString(partial);
+            var query = getMatchesQuery;
             using (var connection = GetConnection())
             {
                 return connection.Query<Word>(query, new { Value = "%" + partialFixed + "%"});
             }
 
+        }
+
+        public async Task<IEnumerable<Word>> GetMatchesAsync(string partial)
+        {
+            var partialFixed = GetFixedPartialString(partial);
+            var query = getMatchesQuery;
+            using (var connection = GetConnection())
+            {
+                return await connection.QueryAsync<Word>(query, new { Value = "%" + partialFixed + "%" });
+            }
+
+        }
+
+        private string GetFixedPartialString(string partial)
+        {
+            return partial?.ToLowerInvariant();
         }
     }
 }

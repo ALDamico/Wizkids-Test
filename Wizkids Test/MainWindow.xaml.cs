@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Wizkids_Test.ViewModels;
 
 namespace Wizkids_Test
 {
@@ -22,7 +23,24 @@ namespace Wizkids_Test
     {
         public MainWindow()
         {
+            _viewModel = new MainWindowViewModel();
+            DataContext = _viewModel;
+
             InitializeComponent();
+            InputTextBox.TextChanged += InputTextBox_TextChangedFromDatabase;
+            InputTextBox.TextChanged += InputTextBox_TextChangedFromWebService;
+        }
+
+        private MainWindowViewModel _viewModel;
+
+        private void InputTextBox_TextChangedFromDatabase(object sender, TextChangedEventArgs e)
+        {
+            _viewModel.FetchFromDatabase();
+        }
+
+        private void InputTextBox_TextChangedFromWebService(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }
