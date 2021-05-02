@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using Wizkids_Test.DataAdapter;
@@ -50,7 +51,8 @@ namespace Wizkids_Test.ViewModels
 
         public void FetchFromDatabase()
         {
-            var viewModels = DataAdapter.GetMatchesFromDb(TargetString);
+            var lastWord = Regex.Split(TargetString, @"\s", RegexOptions.Compiled | RegexOptions.CultureInvariant).LastOrDefault();
+            var viewModels = DataAdapter.GetMatchesFromDb(lastWord);
             DbWords.Clear();
             if (viewModels != null)
             {
