@@ -38,9 +38,9 @@ namespace Wizkids_Test
             _viewModel.FetchFromDatabase();
         }
 
-        private void InputTextBox_TextChangedFromWebService(object sender, TextChangedEventArgs e)
+        private async void InputTextBox_TextChangedFromWebService(object sender, TextChangedEventArgs e)
         {
-
+            await _viewModel.FetchFromWebService();
         }
     }
 }

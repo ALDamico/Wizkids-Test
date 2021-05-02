@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Wizkids_Test.DataAdapter;
+using Wizkids_Test.Services;
+using Wizkids_Test.Services.Authentication;
 
 namespace Wizkids_Test.ViewModels
 {
@@ -15,8 +17,14 @@ namespace Wizkids_Test.ViewModels
         public MainWindowViewModel()
         {
             DbWords = new ObservableCollection<WordViewModel>();
+            WsWords = new ObservableCollection<WordViewModel>();
             var connectionString = ConfigurationManager.ConnectionStrings["AppConnectionString"].ConnectionString;
             DataAdapter = new WordDataAdapter(connectionString);
+            var authenticationStrategy = GetDefaultAuthenticationStrategy();
+            var endpoint = ConfigurationManager.AppSettings.Get("WordServiceEndpoint");
+            
+            var webService = new WordService(authenticationStrategy, endpoint);
+            DataAdapter.AddService(webService);
         }
         private string _targetString;
         public string TargetString
@@ -29,16 +37,40 @@ namespace Wizkids_Test.ViewModels
             }
         }
 
+        private IAuthenticationStrategy GetDefaultAuthenticationStrategy()
+        {
+            var bearerToken = ConfigurationManager.AppSettings.Get("BearerToken");
+            var authenticationInfo = new AuthenticationInfo() { Token = bearerToken };
+            return new BearerTokenAuthenticationStrategy(authenticationInfo);
+        }
+
         public ObservableCollection<WordViewModel> DbWords { get; }
+        public ObservableCollection<WordViewModel> WsWords { get; }
         public WordDataAdapter DataAdapter { get; set; }
 
         public void FetchFromDatabase()
         {
             var viewModels = DataAdapter.GetMatchesFromDb(TargetString);
             DbWords.Clear();
-            foreach (var word in viewModels)
+            if (viewModels != null)
             {
-                DbWords.Add(word);
+                foreach (var word in viewModels)
+                {
+                    DbWords.Add(word);
+                }
+            }
+        }
+
+        public async Task FetchFromWebService()
+        {
+            WsWords.Clear();
+            var viewModels = await DataAdapter.GetMatchesFromWebService(TargetString, "en-GB");
+            if (viewModels != null)
+            {
+                foreach (var word in viewModels)
+                {
+                    WsWords.Add(word);
+                }
             }
         }
     }
